@@ -536,6 +536,9 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
 					$mapping['orderBy'] = $orderByAnnotation->value;
 				}
+				if (isset($oneToManyAnnotation->indexBy)) {
+					$mapping['indexBy'] = $oneToManyAnnotation->indexBy;
+				}
 
 				$metadata->mapOneToMany($mapping);
 			} elseif ($manyToOneAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\ManyToOne')) {
@@ -588,6 +591,9 @@ class FlowAnnotationDriver implements \Doctrine\Common\Persistence\Mapping\Drive
 
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
 					$mapping['orderBy'] = $orderByAnnotation->value;
+				}
+				if (isset($oneToManyAnnotation->indexBy)) {
+					$mapping['indexBy'] = $oneToManyAnnotation->indexBy;
 				}
 
 				$metadata->mapManyToMany($mapping);
