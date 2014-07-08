@@ -81,6 +81,7 @@ class ReflectionService {
 		DATA_PROPERTY_TAGS_VALUES = 14,
 		DATA_PROPERTY_ANNOTATIONS = 15,
 		DATA_PROPERTY_VISIBILITY = 24,
+		DATA_PROPERTY_STATIC = 25,
 		DATA_PARAMETER_POSITION = 16,
 		DATA_PARAMETER_OPTIONAL = 17,
 		DATA_PARAMETER_TYPE = 18,
@@ -1089,6 +1090,26 @@ class ReflectionService {
 	}
 
 	/**
+	 * Tells if the specified class property is static
+	 *
+	 * @param string $className Name of the class
+	 * @param string $propertyName Name of the property
+	 * @return boolean TRUE if the class property is static, otherwise FALSE
+	 * @api
+	 */
+	public function isPropertyStatic($className, $propertyName) {
+		if (!$this->initialized) {
+			$this->initialize();
+		}
+		if ($className[0] === '\\') {
+			$className = substr($className, 1);
+		}
+		$this->loadOrReflectClassIfNecessary($className);
+
+		return isset($this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_STATIC]);
+	}
+
+	/**
 	 * Tells if the specified property has the given annotation
 	 *
 	 * @param string $className Name of the class
@@ -1319,6 +1340,9 @@ class ReflectionService {
 		foreach ($class->getProperties() as $property) {
 			$propertyName = $property->getName();
 			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName] = array();
+			if ($property->isStatic()) {
+				$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_STATIC] = TRUE;
+			}
 
 			$visibility = $property->isPublic() ? self::VISIBILITY_PUBLIC : ($property->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
 			$this->classReflectionData[$className][self::DATA_CLASS_PROPERTIES][$propertyName][self::DATA_PROPERTY_VISIBILITY] = $visibility;

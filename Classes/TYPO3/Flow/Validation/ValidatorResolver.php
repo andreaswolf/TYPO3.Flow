@@ -272,6 +272,9 @@ class ValidatorResolver {
 			// Model based validator
 			$objectValidator = new GenericObjectValidator(array());
 			foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
+				if ($this->reflectionService->isPropertyStatic($targetClassName, $classPropertyName)) {
+					continue;
+				}
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
 				if (!isset($classPropertyTagsValues['var'])) {
